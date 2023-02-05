@@ -1,0 +1,7 @@
+*
+!public/
+!.gitignore
+!bad_words.txt
+!custom_bad_words.txt
+!notice.txt
+!except_words.txt
