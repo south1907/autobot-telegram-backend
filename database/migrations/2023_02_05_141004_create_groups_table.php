@@ -19,6 +19,8 @@ class CreateGroupsTable extends Migration
             $table->string('id_telegram');
             $table->string('user_id_telegram')->nullable();
             $table->integer('active')->default(1);
+            $table->bigInteger('time_delay')->default(3600);
+            $table->timestamp('time_next_run');
             $table->timestamps();
         });
     }
