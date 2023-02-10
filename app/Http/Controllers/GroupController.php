@@ -15,23 +15,38 @@ class GroupController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt-auth');
+//        $this->middleware('jwt-auth');
     }
     public function index(Request $request) {
         $groupId = $request->get('group_id');
 
         $group = Group::where('id_telegram', $groupId)->first();
-        $currentUser = auth()->user();
 
+        if ($group) {
+            return $this->responseSuccess($group);
+        }
         return $this->responseError();
     }
 
     public function update(Request $request, $groupId) {
-        $currentUser = auth()->user();
-        if (!$currentUser) {
-            return $this->responseError();
-        }
+//        $currentUser = auth()->user();
+//        if (!$currentUser) {
+//            return $this->responseError();
+//        }
         $group = Group::where('id_telegram', $groupId)->first();
+
+        if ($group) {
+            $dataUpdate = $request->all();
+            $arrKeyUpdate = ['time_delay', 'active'];
+            foreach ($arrKeyUpdate as $key) {
+                if (array_key_exists($key, $dataUpdate)) {
+                    $group[$key] = $dataUpdate[$key];
+                }
+            }
+            //TODO: update time_next_run
+            $group->save();
+            return $this->responseSuccess();
+        }
 
         return $this->responseError();
     }
