@@ -46,7 +46,7 @@ class GroupController extends Controller
         $group = Group::where('id_telegram', $groupId)->with('items')->first();
         if ($group) {
             if ($currentUser->id_telegram != $group->user_id_telegram) {
-                $this->responseError();
+                return $this->responseError();
             }
             return $this->responseSuccess($group);
         }
