@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Item;
+
 class Group extends Model
 {
     use HasFactory;
@@ -20,4 +22,8 @@ class Group extends Model
         'time_nex_run',
     ];
 
+    public function items()
+    {
+        return $this->belongsToMany(Item::class);
+    }
 }

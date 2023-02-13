@@ -53,6 +53,7 @@ class Message
 
     public function __construct($body)
     {
+        $usernameBotSystem = env('BOT_USERNAME');
         if (array_key_exists('message', $body)) {
             $this->userId = $body['message']['from']['id'];
             if (array_key_exists('first_name', $body['message']['from'])) {
@@ -80,11 +81,21 @@ class Message
             if (array_key_exists('new_chat_participant', $body['message'])) {
                 $this->type = 'MEMBER_JOIN';
                 $this->arrMemberChange = $body['message']['new_chat_members'];
+
+                // check join bot
+                if ($body['message']['new_chat_participant']['username'] == $usernameBotSystem) {
+                    $this->type = 'BOT_JOIN';
+                }
             }
             if (array_key_exists('left_chat_participant', $body['message'])) {
                 $this->type = 'MEMBER_LEFT';
                 $mem = $body['message']['left_chat_member'];
                 $this->arrMemberChange[] = $mem;
+
+                // check join bot
+                if ($body['message']['left_chat_participant']['username'] == $usernameBotSystem) {
+                    $this->type = 'BOT_LEFT';
+                }
             }
 
             if (array_key_exists('caption', $body['message'])) {
@@ -203,7 +214,7 @@ class Message
     }
 
     public function checkNullTypeMessage() {
-        if ($this->type == 'MEMBER_LEFT' || $this->type == 'MEMBER_JOIN' || $this->type == 'MIGRATE_SUPER_GROUP') {
+        if ($this->type == 'MEMBER_LEFT' || $this->type == 'MEMBER_JOIN' || $this->type == 'MIGRATE_SUPER_GROUP' || $this->type == 'BOT_JOIN' || $this->type == 'BOT_LEFT') {
             return false;
         }
         if ($this->typeMessage) {

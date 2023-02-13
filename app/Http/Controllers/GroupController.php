@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\TelegramApi;
 use App\Models\Group;
+use App\Models\Item;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -18,10 +19,25 @@ class GroupController extends Controller
     {
         $this->middleware('jwt-auth');
     }
+
+    public function list(Request $request) {
+        $currentUser = auth()->user();
+        if (!$currentUser) {
+            return $this->responseError();
+        }
+
+        $userIdTelegram = $currentUser->id_telegram;
+        $groups = Group::where('user_id_telegram', $userIdTelegram)->get();
+        if ($groups) {
+            return $this->responseSuccess($groups);
+        }
+        return $this->responseError();
+    }
+
     public function index(Request $request) {
         $groupId = $request->get('group_id');
 
-        $group = Group::where('id_telegram', $groupId)->first();
+        $group = Group::where('id_telegram', $groupId)->with('items')->first();
         if ($group) {
             return $this->responseSuccess($group);
         }
@@ -65,7 +81,9 @@ class GroupController extends Controller
                 $group['time_next_run'] = Carbon::now()->addSeconds($group->time_delay)->toDateTimeString();
             }
 
-            //TODO: set list item
+            if (array_key_exists('items', $dataUpdate)) {
+                $group->items()->sync($dataUpdate['items']);
+            }
 
             $group->save();
             return $this->responseSuccess();
