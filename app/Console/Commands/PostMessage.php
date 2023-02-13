@@ -55,7 +55,6 @@ class PostMessage extends Command
             $this->error("not set token bot");
             return false;
         }
-        print_r($tokenBot);
         foreach($groups as $group) {
             if ($group->time_next_run != null && $group->time_next_run < $currentDate) {
                 // thoi gian time_next_run < thoi gian hien tai --> thuc hien gui tin nhan tu dong

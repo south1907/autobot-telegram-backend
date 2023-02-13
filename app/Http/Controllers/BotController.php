@@ -73,6 +73,13 @@ class BotController extends Controller
                 }
             }
             if ($answer) {
+                try {
+                    new Telegram($tokenBot);
+                } catch (TelegramException $e) {
+                    info('ERROR CLIENT TELEGRAM');
+                    return false;
+                }
+
                 TelegramApi::sendMessage($groupId, $answer);
             }
             return true;
