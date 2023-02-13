@@ -88,12 +88,14 @@ class PostMessage extends Command
                         $text .= "\n" . $firstItem->link;
                     }
 
-                    $message = [
-                        'text'  =>  $text,
-                        'reply_markup'  =>  null
-                    ];
+                    if ($text != "") {
+                        $message = [
+                            'text'  =>  $text,
+                            'reply_markup'  =>  null
+                        ];
 
-                    TelegramApi::sendMessage($group->id_telegram, $message);
+                        TelegramApi::sendMessage($group->id_telegram, $message);
+                    }
                 }
 
                 // update time_next_run
