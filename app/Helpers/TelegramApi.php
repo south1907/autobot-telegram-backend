@@ -27,6 +27,18 @@ class TelegramApi
         }
     }
 
+    public static function sendPhoto($chatId, $message) {
+        try {
+            TRequest::sendPhoto([
+                'chat_id' => $chatId,
+                'photo' => $message['image'],
+                'caption' => $message['title'],
+            ]);
+        } catch (TelegramException $e) {
+            info('ERROR SEND MESSAGE');
+        }
+    }
+
     public static function deleteMessage($message) {
         try {
             $responseDelete = TRequest::deleteMessage([
