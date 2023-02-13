@@ -56,7 +56,7 @@ class PostMessage extends Command
             return false;
         }
         foreach($groups as $group) {
-//            if ($group->time_next_run != null && $group->time_next_run < $currentDate) {
+            if ($group->time_next_run != null && $group->time_next_run < $currentDate) {
                 // thoi gian time_next_run < thoi gian hien tai --> thuc hien gui tin nhan tu dong
                 Log::info("Send auto message to group: " . $group->name);
                 $this->info("Send auto message to group: " . $group->name);
@@ -71,18 +71,28 @@ class PostMessage extends Command
                 //TODO:get items and send it
                 if ($group->items && count($group->items) > 0) {
                     $firstItem = $group->items[0];
-                    $messagePhoto = [
-                        'image'  =>  $firstItem->image,
-                        'title'  =>  $firstItem->name
-                    ];
 
-                    $text = $firstItem->name . ' - ' . $firstItem->link;
+                    if ($firstItem->image) {
+                        $messagePhoto = [
+                            'image'  =>  $firstItem->image,
+                            'title'  =>  $firstItem->name
+                        ];
+                        TelegramApi::sendPhoto($group->id_telegram, $messagePhoto);
+                    }
+
+                    $text = "";
+                    if ($firstItem->description) {
+                        $text .= $firstItem->description;
+                    }
+                    if ($firstItem->link) {
+                        $text .= "\n" . $firstItem->link;
+                    }
+
                     $message = [
                         'text'  =>  $text,
                         'reply_markup'  =>  null
                     ];
 
-                    TelegramApi::sendPhoto($group->id_telegram, $messagePhoto);
                     TelegramApi::sendMessage($group->id_telegram, $message);
                 }
 
@@ -90,7 +100,7 @@ class PostMessage extends Command
                 $group->time_next_run = $currentDate->addSeconds($group->time_delay)->toDateTimeString();
                 $group->save();
             }
-//        }
+        }
         $this->info('Done');
         Log::info("Done");
     }
