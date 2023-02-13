@@ -35,10 +35,19 @@ class GroupController extends Controller
     }
 
     public function index(Request $request) {
+
+        $currentUser = auth()->user();
+        if (!$currentUser) {
+            return $this->responseError();
+        }
+
         $groupId = $request->get('group_id');
 
         $group = Group::where('id_telegram', $groupId)->with('items')->first();
         if ($group) {
+            if ($currentUser->id_telegram != $group->user_id_telegram) {
+                $this->responseError();
+            }
             return $this->responseSuccess($group);
         }
         return $this->responseError();
