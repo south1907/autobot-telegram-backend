@@ -70,6 +70,11 @@ class GroupController extends Controller
             }
 
             $userIdTelegram = $currentUser->id_telegram;
+
+            if ($userIdTelegram != $group->user_id_telegram) {
+                return $this->responseError('Bạn không có quyền thực hiện');
+            }
+
             $checkAdmin = TelegramApi::checkAdmin($groupId, $userIdTelegram);
 
             if (!$checkAdmin) {
