@@ -95,6 +95,19 @@ class GroupController extends Controller
                 $group['time_next_run'] = Carbon::now()->addSeconds($group->time_delay)->toDateTimeString();
             }
 
+            if (array_key_exists('active2', $dataUpdate)) {
+                if ($dataUpdate['active2'] == 0 || $dataUpdate['active2'] == 1) {
+                    $group['active2'] = $dataUpdate['active2'];
+                }
+            }
+
+            if (array_key_exists('time_delay2', $dataUpdate) && $dataUpdate['time_delay2'] > 0) {
+                $group['time_delay2'] = $dataUpdate['time_delay2'];
+
+                // update time_next_run
+                $group['time_next_run2'] = Carbon::now()->addSeconds($group->time_delay2)->toDateTimeString();
+            }
+
             if (array_key_exists('items', $dataUpdate)) {
                 $group->items()->sync($dataUpdate['items']);
             }

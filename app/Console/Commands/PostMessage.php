@@ -45,16 +45,27 @@ class PostMessage extends Command
      */
     public function handle()
     {
-        // get groups active and check send message to group
-        $groups = Group::where('active', 1)->with('items')->get();
-        $currentDate = Carbon::now();
         $tokenBot = env('BOT_TOKEN');
-
         if (!$tokenBot) {
             Log::error("not set token bot");
             $this->error("not set token bot");
             return false;
         }
+
+        // get groups active and check send message to group
+        $groups = Group::where('active', 1)->with('type1_items')->get();
+        $this->processGroups($groups, 'type1_items', $tokenBot);
+
+        $groups2 = Group::where('active2', 1)->with('type2_items')->get();
+        $this->processGroups($groups2, 'type2_items', $tokenBot);
+
+        $this->info('Done');
+        Log::info("Done");
+    }
+
+    private function processGroups($groups, string $type, $tokenBot): void
+    {
+        $currentDate = Carbon::now();
         foreach($groups as $group) {
             if ($group->time_next_run != null && $group->time_next_run < $currentDate) {
                 // thoi gian time_next_run < thoi gian hien tai --> thuc hien gui tin nhan tu dong
@@ -65,12 +76,12 @@ class PostMessage extends Command
                     new Telegram($tokenBot);
                 } catch (TelegramException $e) {
                     info('ERROR CLIENT TELEGRAM');
-                    return false;
+                    return;
                 }
 
                 //TODO:get items and send it
-                if ($group->items && count($group->items) > 0) {
-                    $firstItem = $group->items[0];
+                if ($group[$type] && count($group[$type]) > 0) {
+                    $firstItem = $group[$type][0];
 
                     if ($firstItem->image) {
                         $messagePhoto = [
@@ -98,12 +109,14 @@ class PostMessage extends Command
                     }
                 }
 
-                // update time_next_run
-                $group->time_next_run = $currentDate->addSeconds($group->time_delay)->toDateTimeString();
+                // update time_next_run || time_next_run2
+                if ($type == 'type1_items') {
+                    $group->time_next_run = $currentDate->addSeconds($group->time_delay)->toDateTimeString();
+                } else {
+                    $group->time_next_run2 = $currentDate->addSeconds($group->time_delay2)->toDateTimeString();
+                }
                 $group->save();
             }
         }
-        $this->info('Done');
-        Log::info("Done");
     }
 }

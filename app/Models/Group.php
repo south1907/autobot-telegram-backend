@@ -20,10 +20,21 @@ class Group extends Model
         'active',
         'time_delay',
         'time_nex_run',
+        'active2',
+        'time_delay2',
+        'time_nex_run2',
     ];
 
     public function items()
     {
         return $this->belongsToMany(Item::class);
+    }
+
+    public function type1_items() {
+        return $this->items()->where('type','=', 1);
+    }
+
+    public function type2_items() {
+        return $this->items()->where('type','=', 2);
     }
 }
