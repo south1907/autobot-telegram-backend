@@ -16,16 +16,10 @@ class ItemController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt-auth');
     }
     public function list(Request $request) {
-        $currentUser = auth()->user();
-        if (!$currentUser) {
-            return $this->responseError();
-        }
 
-        $userIdTelegram = $currentUser->id_telegram;
-        $items = Item::where('id_telegram', $userIdTelegram)->get();
+        $items = Item::all();
         if ($items) {
             return $this->responseSuccess($items);
         }
@@ -33,12 +27,16 @@ class ItemController extends Controller
     }
 
     public function create(Request $request) {
+        $this->middleware('jwt-auth');
         $currentUser = auth()->user();
         if (!$currentUser) {
             return $this->responseError();
         }
 
         $userIdTelegram = $currentUser->id_telegram;
+        if ($currentUser->is_admin == 0) {
+            return $this->responseError('Không có quyền');
+        }
         $data = $request->all();
 
         $rules = [
