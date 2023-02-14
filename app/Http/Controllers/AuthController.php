@@ -122,7 +122,7 @@ class AuthController extends Controller
             'name' => auth()->user()->name,
             'id' => auth()->user()->id,
             'access_token' => $token,
-            'is_admin' => 0,
+            'is_admin' => auth()->user()->is_admin,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60 * 6
         ]);
