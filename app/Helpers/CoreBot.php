@@ -47,7 +47,7 @@ class CoreBot
     private static function getAnswerDefault($fullname) {
         $urlFrontend = env("FRONTEND_URL");
         $botUsername = env("BOT_USERNAME", 'notice2bot');
-        $urlAddbot = 'https://t.me/' . $botUsername . '?startgroup=domon'
+        $urlAddbot = 'https://t.me/' . $botUsername . '?startgroup=domon';
         $text = "Xin chào, " . $fullname;
 
         return [
@@ -59,7 +59,7 @@ class CoreBot
                         [
                             'text'  =>  'ℹ Thêm bot vào group',
                             'url' =>  $urlAddbot
-                        ]
+                        ],
                         [
                             'text'  =>  'ℹ Website',
                             'url' =>  $urlFrontend
