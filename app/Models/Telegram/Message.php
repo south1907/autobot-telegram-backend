@@ -258,6 +258,14 @@ class Message
     /**
      * @return mixed
      */
+    public function getFullname()
+    {
+        return $this->firstName . ' ' . $this->lastName;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getUsername()
     {
         return $this->username;

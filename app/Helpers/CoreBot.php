@@ -13,21 +13,21 @@ class CoreBot
 
         // chat command voi group
         if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && $message->getCommand() == '/setup') {
-            $result = self::getAnswerSetup($message->getSourceId());
+            $result = self::getAnswerSetup($message->getSourceId(), $message->getFullname());
         }
 
         // chat voi bot
         if ($message->getType() == 'WITH_BOT') {
-            $result = self::getAnswerDefault();
+            $result = self::getAnswerDefault($message->getFullname());
         }
 
         return $result;
     }
 
-    private static function getAnswerSetup($groupId) {
+    private static function getAnswerSetup($groupId, $fullname) {
         $urlFrontend = env("FRONTEND_URL");
         $linkSetup = $urlFrontend ."/group/". $groupId ."/setup";
-        $text = "Truy cập vào cài đặt";
+        $text = "Xin chào, " . $fullname;
 
         return [
             'text'  =>  $text,
@@ -44,15 +44,22 @@ class CoreBot
         ];
     }
 
-    private static function getAnswerDefault() {
+    private static function getAnswerDefault($fullname) {
         $urlFrontend = env("FRONTEND_URL");
-        $text = "Truy cập website";
+        $botUsername = env("BOT_USERNAME", 'notice2bot');
+        $urlAddbot = 'https://t.me/' . $botUsername . '?startgroup=domon'
+        $text = "Xin chào, " . $fullname;
 
         return [
             'text'  =>  $text,
             'reply_markup'  =>  [
                 'inline_keyboard'  =>  [
                     [
+
+                        [
+                            'text'  =>  'ℹ Thêm bot vào group',
+                            'url' =>  $urlAddbot
+                        ]
                         [
                             'text'  =>  'ℹ Website',
                             'url' =>  $urlFrontend
