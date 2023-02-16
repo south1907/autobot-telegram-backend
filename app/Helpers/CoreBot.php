@@ -27,7 +27,7 @@ class CoreBot
     private static function getAnswerSetup($groupId, $fullname) {
         $urlFrontend = env("FRONTEND_URL");
         $linkSetup = $urlFrontend ."/group/". $groupId ."/setup";
-        $text = "Xin chào, " . $fullname;
+        $text = "Xin chào, <b>" . $fullname . "</b>";
 
         return [
             'text'  =>  $text,
@@ -48,7 +48,7 @@ class CoreBot
         $urlFrontend = env("FRONTEND_URL");
         $botUsername = env("BOT_USERNAME", 'notice2bot');
         $urlAddbot = 'https://t.me/' . $botUsername . '?startgroup=domon';
-        $text = "Xin chào, " . $fullname;
+        $text = "Xin chào, <b>" . $fullname . "</b>";
 
         return [
             'text'  =>  $text,
