@@ -83,7 +83,7 @@ class Message
                 $this->arrMemberChange = $body['message']['new_chat_members'];
 
                 // check join bot
-                if ($body['message']['new_chat_participant']['username'] == $usernameBotSystem) {
+                if (array_key_exists('username', $body['message']['new_chat_participant']) && $body['message']['new_chat_participant']['username'] == $usernameBotSystem) {
                     $this->type = 'BOT_JOIN';
                 }
             }
@@ -93,7 +93,7 @@ class Message
                 $this->arrMemberChange[] = $mem;
 
                 // check join bot
-                if ($body['message']['left_chat_participant']['username'] == $usernameBotSystem) {
+                if (array_key_exists('username', $body['message']['new_chat_participant']) && $body['message']['left_chat_participant']['username'] == $usernameBotSystem) {
                     $this->type = 'BOT_LEFT';
                 }
             }
