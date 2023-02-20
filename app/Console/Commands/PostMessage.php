@@ -91,11 +91,47 @@ class PostMessage extends Command
                         TelegramApi::sendPhoto($group->id_telegram, $messagePhoto);
                     }
 
+                    // send type special
+                    $resMedia = False;
+                    if ($firstItem->type == 1) {
+                        // video
+                        if (!str_contains($firstItem->link, 'youtube.com')) {
+                            Log::info("Send video: " . $group->name);
+                            $this->info("Send video: " . $group->name);
+                            $messageVideo = [
+                                'video'  =>  $firstItem->link,
+                                'title'  =>  $firstItem->name
+                            ];
+                            $resMedia = TelegramApi::sendVideo($group->id_telegram, $messageVideo);
+                            if (!$resMedia) {
+                                Log::info("Send video error: " . $group->name);
+                                $this->info("Send video error: " . $group->name);
+                            }
+                        } else {
+                            Log::info("Video youtube, not upload telegram: " . $group->name);
+                            $this->info("Video youtube, not upload telegram: " . $group->name);
+                        }
+                    }
+
+                    if ($firstItem->type == 2) {
+                        // file
+                        $messageFile = [
+                            'file'  =>  $firstItem->link,
+                            'title'  =>  $firstItem->name
+                        ];
+                        $resMedia = TelegramApi::sendDocument($group->id_telegram, $messageFile);
+                        if (!$resMedia) {
+                            Log::info("Send file error: " . $group->name);
+                            $this->info("Send file error: " . $group->name);
+                        }
+                    }
+
                     $text = "";
                     if ($firstItem->description) {
                         $text .= $firstItem->description;
                     }
-                    if ($firstItem->link) {
+
+                    if ($firstItem->link && !$resMedia) {
                         $text .= "\n" . $firstItem->link;
                     }
 

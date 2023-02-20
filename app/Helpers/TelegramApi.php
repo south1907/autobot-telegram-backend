@@ -29,14 +29,45 @@ class TelegramApi
 
     public static function sendPhoto($chatId, $message) {
         try {
-            TRequest::sendPhoto([
+            $response = TRequest::sendPhoto([
                 'chat_id' => $chatId,
                 'photo' => $message['image'],
                 'caption' => $message['title'],
             ]);
+            info($response);
         } catch (TelegramException $e) {
             info('ERROR SEND MESSAGE');
         }
+    }
+
+    public static function sendVideo($chatId, $message) {
+        try {
+            $response = TRequest::sendVideo([
+                'chat_id' => $chatId,
+                'video' => $message['video'],
+                'caption' => $message['title'],
+            ]);
+            info($response);
+            return $response->isOk();
+        } catch (TelegramException $e) {
+            info('ERROR SEND MESSAGE');
+        }
+        return False;
+    }
+
+    public static function sendDocument($chatId, $message) {
+        try {
+            $response = TRequest::sendDocument([
+                'chat_id' => $chatId,
+                'document' => $message['file'],
+                'caption' => $message['title'],
+            ]);
+            info($response);
+            return $response->isOk();
+        } catch (TelegramException $e) {
+            info('ERROR SEND MESSAGE');
+        }
+        return False;
     }
 
     public static function deleteMessage($message) {
