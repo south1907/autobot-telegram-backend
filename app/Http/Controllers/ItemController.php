@@ -40,8 +40,6 @@ class ItemController extends Controller
         $data = $request->all();
 
         $rules = [
-            'name' => 'required|string|max:255',
-            'link' => 'required|string',
             'type' => 'required|int'
         ];
         $validator = Validator::make($data,$rules);
