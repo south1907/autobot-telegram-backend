@@ -32,6 +32,7 @@ Route::prefix('group')->group(function () {
 Route::prefix('item')->group(function () {
     Route::get('list', [ItemController::class, 'list'])->name('list.index');
     Route::post('create', [ItemController::class, 'create'])->name('item.create');
+    Route::post('{itemId}/delete', [ItemController::class, 'delete'])->name('item.delete');
 });
 
 Route::post('login', [AuthController::class, 'login'])->name('login');

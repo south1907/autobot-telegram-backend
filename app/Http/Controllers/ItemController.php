@@ -16,6 +16,7 @@ class ItemController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('jwt-auth');
     }
     public function list(Request $request) {
 
@@ -27,7 +28,6 @@ class ItemController extends Controller
     }
 
     public function create(Request $request) {
-        $this->middleware('jwt-auth');
         $currentUser = auth()->user();
         if (!$currentUser) {
             return $this->responseError();
@@ -65,5 +65,30 @@ class ItemController extends Controller
         }
 
         return $this->responseSuccess();
+    }
+
+    public function delete(Request $request, $itemId) {
+        $currentUser = auth()->user();
+        if (!$currentUser) {
+            return $this->responseError();
+        }
+
+        if ($currentUser->is_admin == 0) {
+            return $this->responseError('Không có quyền');
+        }
+
+        try{
+            $item = Item::find($itemId);
+
+            if ($item) {
+                $item->delete();
+                return $this->responseSuccess();
+            }
+        }
+        catch(Exception $e){
+            return $this->responseError();
+        }
+
+        return $this->responseError();
     }
 }
