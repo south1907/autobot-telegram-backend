@@ -93,7 +93,7 @@ class Message
                 $this->arrMemberChange[] = $mem;
 
                 // check join bot
-                if (array_key_exists('username', $body['message']['new_chat_participant']) && $body['message']['left_chat_participant']['username'] == $usernameBotSystem) {
+                if (array_key_exists('username', $body['message']['left_chat_participant']) && $body['message']['left_chat_participant']['username'] == $usernameBotSystem) {
                     $this->type = 'BOT_LEFT';
                 }
             }
