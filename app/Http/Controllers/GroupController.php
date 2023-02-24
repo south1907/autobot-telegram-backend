@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\TelegramApi;
 use App\Models\Group;
-use App\Models\Item;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -82,6 +82,7 @@ class GroupController extends Controller
             }
 
             $dataUpdate = $request->all();
+            $setting = Setting::where('type', 'SYSTEM')->first();
             if (array_key_exists('active', $dataUpdate)) {
                 if ($dataUpdate['active'] == 0 || $dataUpdate['active'] == 1) {
                     $group['active'] = $dataUpdate['active'];
@@ -89,6 +90,12 @@ class GroupController extends Controller
             }
 
             if (array_key_exists('time_delay', $dataUpdate) && $dataUpdate['time_delay'] > 0) {
+                if ($setting) {
+
+                    if ($dataUpdate['time_delay'] < $setting->min_time_delay || $dataUpdate['time_delay'] > $setting->max_time_delay) {
+                        return $this->responseError('Thời gian delay không phù hợp ('.$setting->min_time_delay.' < time < '.$setting->max_time_delay.')');
+                    }
+                }
                 $group['time_delay'] = $dataUpdate['time_delay'];
 
                 // update time_next_run
@@ -118,4 +125,49 @@ class GroupController extends Controller
 
         return $this->responseError();
     }
+
+    public function getSetting(Request $request) {
+
+        $currentUser = auth()->user();
+        if (!$currentUser) {
+            return $this->responseError();
+        }
+
+        if ($currentUser->is_admin == 0) {
+            return $this->responseError();
+        }
+
+        $setting = Setting::where('type', 'SYSTEM')->first();
+        if ($setting) {
+            return $this->responseSuccess($setting);
+        }
+        return $this->responseError();
+    }
+
+    public function editSetting(Request $request) {
+        $currentUser = auth()->user();
+        if (!$currentUser) {
+            return $this->responseError();
+        }
+
+        if ($currentUser->is_admin == 0) {
+            return $this->responseError();
+        }
+
+        $setting = Setting::where('type', 'SYSTEM')->first();
+        if ($setting) {
+            $dataUpdate = $request->all();
+            $listField = ['default_time_delay', 'min_time_delay', 'max_time_delay'];
+            foreach ($listField as $key) {
+                if (array_key_exists($key, $dataUpdate)) {
+                    $setting[$key] = $dataUpdate[$key];
+                }
+            }
+            $setting->save();
+            return $this->responseSuccess();
+        }
+
+        return $this->responseError();
+    }
+
 }

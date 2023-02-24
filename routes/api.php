@@ -27,6 +27,8 @@ Route::prefix('group')->group(function () {
     Route::get('', [GroupController::class, 'index'])->name('group.index');
     Route::get('list', [GroupController::class, 'list'])->name('group.list');
     Route::post('{groupId}/edit', [GroupController::class, 'update'])->name('group.update');
+    Route::get('setting', [GroupController::class, 'getSetting'])->name('group.setting');
+    Route::post('setting/update', [GroupController::class, 'editSetting'])->name('group.setting.update');
 });
 
 Route::prefix('item')->group(function () {

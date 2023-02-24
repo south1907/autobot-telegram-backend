@@ -16,7 +16,6 @@ class ItemController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt-auth');
     }
     public function list(Request $request) {
 
@@ -28,6 +27,7 @@ class ItemController extends Controller
     }
 
     public function create(Request $request) {
+        $this->middleware('jwt-auth');
         $currentUser = auth()->user();
         if (!$currentUser) {
             return $this->responseError();
@@ -50,13 +50,21 @@ class ItemController extends Controller
         try{
             $item = new Item();
             $listField = ['name', 'description', 'image', 'type', 'link'];
+            $flagCheck = false;
             foreach ($listField as $key) {
                 if (array_key_exists($key, $data)) {
                     $item[$key] = $data[$key];
+                    if ($key != 'type') {
+                        $flagCheck = true;
+                    }
                 }
             }
-            $item->id_telegram = $userIdTelegram;
-            $item->save();
+            if ($flagCheck) {
+                $item->id_telegram = $userIdTelegram;
+                $item->save();
+            } else {
+                return $this->responseError('Kiểm tra lại các trường bắt buộc');
+            }
         }
         catch(Exception $e){
             return $this->responseError();
@@ -66,6 +74,7 @@ class ItemController extends Controller
     }
 
     public function delete(Request $request, $itemId) {
+        $this->middleware('jwt-auth');
         $currentUser = auth()->user();
         if (!$currentUser) {
             return $this->responseError();

@@ -7,6 +7,7 @@ use App\Helpers\CoreBot;
 use App\Helpers\MessageHelper;
 use App\Helpers\TelegramApi;
 use App\Models\Group;
+use App\Models\Setting;
 use App\Models\Telegram\Message;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -44,6 +45,10 @@ class BotController extends Controller
                     $group->user_id_telegram = $message->getUserId();
                     $group->active = 0;
                     $group->time_delay = 86400;
+                    $setting = Setting::where('type', 'SYSTEM')->first();
+                    if ($setting) {
+                        $group->time_delay = $setting->defaut_time_delay;
+                    }
 
                     $group->time_next_run = Carbon::now()->addSeconds($group->time_delay)->toDateTimeString();
 
