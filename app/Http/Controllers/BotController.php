@@ -55,7 +55,6 @@ class BotController extends Controller
                 $findGroup = Group::where('id_telegram', $groupId)->first();
                 if ($findGroup) {
                     info("group " . $groupId . " remove a bot, delete group data");
-                    $findGroup->items()->delete();
                     $findGroup->delete();
                 }
             }
