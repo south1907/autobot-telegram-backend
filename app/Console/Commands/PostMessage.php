@@ -67,7 +67,10 @@ class PostMessage extends Command
     {
         $currentDate = Carbon::now();
         foreach($groups as $group) {
-            if ($group->time_next_run != null && $group->time_next_run < $currentDate) {
+            if (
+                ($type == 'type1_items' && $group->time_next_run != null && $group->time_next_run < $currentDate)
+                || ($type == 'type2_items' && $group->time_next_run2 != null && $group->time_next_run2 < $currentDate)
+            ) {
                 // thoi gian time_next_run < thoi gian hien tai --> thuc hien gui tin nhan tu dong
                 Log::info("Send auto message to group: " . $group->name);
                 $this->info("Send auto message to group: " . $group->name);
@@ -79,7 +82,6 @@ class PostMessage extends Command
                     return;
                 }
 
-                //TODO:get items and send it
                 if ($group[$type] && count($group[$type]) > 0) {
                     $firstItem = $group[$type][0];
 
