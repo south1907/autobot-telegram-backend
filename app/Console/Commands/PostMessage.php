@@ -65,8 +65,8 @@ class PostMessage extends Command
 
     private function processGroups($groups, string $type, $tokenBot): void
     {
-        $currentDate = Carbon::now();
         foreach($groups as $group) {
+            $currentDate = Carbon::now();
             if (
                 ($type == 'type1_items' && $group->time_next_run != null && $group->time_next_run < $currentDate)
                 || ($type == 'type2_items' && $group->time_next_run2 != null && $group->time_next_run2 < $currentDate)
