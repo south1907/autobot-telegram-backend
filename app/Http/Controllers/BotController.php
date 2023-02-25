@@ -46,8 +46,8 @@ class BotController extends Controller
                     $group->active = 0;
                     $group->time_delay = 86400;
                     $setting = Setting::where('type', 'SYSTEM')->first();
-                    if ($setting) {
-                        $group->time_delay = $setting->defaut_time_delay;
+                    if ($setting && $setting->default_time_delay) {
+                        $group->time_delay = $setting->default_time_delay;
                     }
 
                     $group->time_next_run = Carbon::now()->addSeconds($group->time_delay)->toDateTimeString();
