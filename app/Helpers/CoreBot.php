@@ -12,7 +12,7 @@ class CoreBot
         $result = null;
 
         // chat command voi group
-        if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && $message->getCommand() == '/setup') {
+        if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && ($message->getCommand() == '/setup' || $message->getCommand() == '/start')) {
             $result = self::getAnswerSetup($message->getSourceId(), $message->getFullname());
         }
 
