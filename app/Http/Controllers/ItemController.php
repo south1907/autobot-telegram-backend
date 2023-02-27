@@ -19,7 +19,12 @@ class ItemController extends Controller
     }
     public function list(Request $request) {
 
-        $items = Item::all();
+        if ($request->has('type') && $request->type == 1 || $request->type == 2) {
+            $items = Item::where('type', $request->type)->get();
+        } else {
+            $items = Item::all();
+        }
+
         if ($items) {
             return $this->responseSuccess($items);
         }
