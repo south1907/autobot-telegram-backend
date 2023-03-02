@@ -90,7 +90,7 @@ class CoreBot
         $results[] = [
             'type'  =>  'text',
             'data'  =>  [
-                'text'  =>  null,
+                'text'  =>  'Menu',
                 'reply_markup'  =>  [
                     'inline_keyboard'  =>  [
                         [
