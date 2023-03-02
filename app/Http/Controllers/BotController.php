@@ -84,7 +84,15 @@ class BotController extends Controller
                     return false;
                 }
 
-                TelegramApi::sendMessage($groupId, $answer);
+                foreach ($answer as $iAnswer) {
+                    if ($iAnswer['type'] == 'text') {
+                        TelegramApi::sendMessage($groupId, $iAnswer['data']);
+                    }
+                    if ($iAnswer['type'] == 'image') {
+                        TelegramApi::sendPhoto($groupId, $iAnswer['data']);
+                    }
+                }
+
             }
             return true;
         }

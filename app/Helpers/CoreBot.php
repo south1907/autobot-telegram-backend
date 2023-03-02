@@ -29,19 +29,25 @@ class CoreBot
         $linkSetup = $urlFrontend ."/group/". $groupId ."/setup";
         $text = "Xin chào, <b>" . $fullname . "</b>";
 
-        return [
-            'text'  =>  $text,
-            'reply_markup'  =>  [
-                'inline_keyboard'  =>  [
-                    [
+        $results = [];
+        $setupAnswer = [
+            'type'  =>  'text',
+            'data'  =>  [
+                'text'  =>  $text,
+                'reply_markup'  =>  [
+                    'inline_keyboard'  =>  [
                         [
-                            'text'  =>  'ℹ Cấu hình',
-                            'url' =>  $linkSetup
+                            [
+                                'text'  =>  'ℹ Cấu hình',
+                                'url' =>  $linkSetup
+                            ]
                         ]
                     ]
                 ]
             ]
         ];
+        $results[] = $setupAnswer;
+        return $results;
     }
 
     private static function getAnswerDefault($fullname) {
@@ -50,24 +56,59 @@ class CoreBot
         $urlAddbot = 'https://t.me/' . $botUsername . '?startgroup=domon';
         $text = "Xin chào, <b>" . $fullname . "</b>";
 
-        return [
-            'text'  =>  $text,
-            'reply_markup'  =>  [
-                'inline_keyboard'  =>  [
-                    [
+        $results = [];
 
+        // cau chao
+        $results[] = [
+            'type'  =>  'text',
+            'data'  =>  [
+                'text'  =>  $text,
+                'reply_markup'  =>  null
+            ]
+        ];
+
+        // hinh anh
+        $results[] = [
+            'type'  =>  'image',
+            'data'  =>  [
+                'image'  =>  'https://bot.sachkinhhay.com/static/media/demo.png',
+                'title'  =>  null
+            ]
+        ];
+
+        // huong dan
+        $textHuongdan = "Đây là bot ứng dụng chia sẻ Chánh Pháp của Phật Như Lai đến với mọi người, được sử dụng ở trong các Group. \n\n<b>Hướng dẫn sử dụng:</b> \n Bước 1: Thêm bot vào Group \n Bước 2: Set quyền Admin cho bot để bot có thể đăng bài \n Bước 3: Vào mục Cài Đặt và đăng nhập trên trang web và cấu hình nội dung được đăng vào trong Group";
+        $results[] = [
+            'type'  =>  'text',
+            'data'  =>  [
+                'text'  =>  $textHuongdan,
+                'reply_markup'  =>  null
+            ]
+        ];
+
+        // nut tra loi
+        $results[] = [
+            'type'  =>  'text',
+            'data'  =>  [
+                'text'  =>  null,
+                'reply_markup'  =>  [
+                    'inline_keyboard'  =>  [
                         [
-                            'text'  =>  'ℹ Thêm bot vào group',
-                            'url' =>  $urlAddbot
-                        ],
-                        [
-                            'text'  =>  'ℹ Website',
-                            'url' =>  $urlFrontend
+                            [
+                                'text'  =>  'ℹ Thêm bot vào group',
+                                'url' =>  $urlAddbot
+                            ],
+                            [
+                                'text'  =>  'ℹ Website',
+                                'url' =>  $urlFrontend
+                            ]
                         ]
                     ]
                 ]
             ]
         ];
+
+        return $results;
     }
 
     private static function replaceByArray($arr, $text) {
