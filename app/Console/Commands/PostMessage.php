@@ -82,8 +82,26 @@ class PostMessage extends Command
                     return;
                 }
 
-                if ($group[$type] && count($group[$type]) > 0) {
-                    $firstItem = $group[$type][0];
+                $currentIndex = 0;
+                $maxItem = count($group[$type]);
+                if ($group[$type] && $maxItem > 0) {
+                    if ($type == 'type1_items') {
+                        $typeSend = $group->type_send;
+                        $currentIndex = $group->current_index;
+                    } else {
+                        $typeSend = $group->type_send2;
+                        $currentIndex = $group->current_index2;
+                    }
+
+                    if ($typeSend == 1) {
+                        // type random
+                        $currentIndex = rand(0, $maxItem - 1);
+                    }
+                    Log::info("current_index: " . $currentIndex);
+                    $this->info("current_index: " . $currentIndex);
+
+                    $currentIndex = $currentIndex % $maxItem;
+                    $firstItem = $group[$type][$currentIndex];
 
                     if ($firstItem->image) {
                         $messagePhoto = [
@@ -148,9 +166,16 @@ class PostMessage extends Command
                 }
 
                 // update time_next_run || time_next_run2
+                // update current_index
                 if ($type == 'type1_items') {
+                    if ($maxItem > 0) {
+                        $group->current_index = ($currentIndex + 1) % $maxItem;
+                    }
                     $group->time_next_run = $currentDate->addSeconds($group->time_delay)->toDateTimeString();
                 } else {
+                    if ($maxItem > 0) {
+                        $group->current_index2 = ($currentIndex + 1) % $maxItem;
+                    }
                     $group->time_next_run2 = $currentDate->addSeconds($group->time_delay2)->toDateTimeString();
                 }
                 $group->save();
