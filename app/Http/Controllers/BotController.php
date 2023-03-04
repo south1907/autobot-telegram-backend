@@ -44,13 +44,21 @@ class BotController extends Controller
                     $group->id_telegram = $message->getSourceId();
                     $group->user_id_telegram = $message->getUserId();
                     $group->active = 0;
+                    $group->active2 = 0;
                     $group->time_delay = 86400;
+                    $group->time_delay2 = 86400;
+                    $group->current_index = 0;
+                    $group->current_index2 = 0;
+                    $group->type_send = 0;
+                    $group->type_send2 = 0;
                     $setting = Setting::where('type', 'SYSTEM')->first();
                     if ($setting && $setting->default_time_delay) {
                         $group->time_delay = $setting->default_time_delay;
+                        $group->time_delay2 = $setting->default_time_delay;
                     }
 
                     $group->time_next_run = Carbon::now()->addSeconds($group->time_delay)->toDateTimeString();
+                    $group->time_next_run2 = $group->time_next_run;
 
                     $group->save();
                 }

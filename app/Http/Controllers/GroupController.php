@@ -102,6 +102,12 @@ class GroupController extends Controller
                 $group['time_next_run'] = Carbon::now()->addSeconds($group->time_delay)->toDateTimeString();
             }
 
+            if (array_key_exists('type_send', $dataUpdate)) {
+                if ($dataUpdate['type_send'] == 0 || $dataUpdate['type_send'] == 1) {
+                    $group['type_send'] = $dataUpdate['type_send'];
+                }
+            }
+
             if (array_key_exists('active2', $dataUpdate)) {
                 if ($dataUpdate['active2'] == 0 || $dataUpdate['active2'] == 1) {
                     $group['active2'] = $dataUpdate['active2'];
@@ -115,9 +121,18 @@ class GroupController extends Controller
                 $group['time_next_run2'] = Carbon::now()->addSeconds($group->time_delay2)->toDateTimeString();
             }
 
+            if (array_key_exists('type_send2', $dataUpdate)) {
+                if ($dataUpdate['type_send2'] == 0 || $dataUpdate['type_send2'] == 1) {
+                    $group['type_send2'] = $dataUpdate['type_send2'];
+                }
+            }
+
             if (array_key_exists('items', $dataUpdate)) {
                 $group->items()->sync($dataUpdate['items']);
             }
+
+            $group->current_index = 0;
+            $group->current_index2 = 0;
 
             $group->save();
             return $this->responseSuccess();

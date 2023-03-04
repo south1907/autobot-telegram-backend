@@ -20,9 +20,13 @@ class Group extends Model
         'active',
         'time_delay',
         'time_nex_run',
+        'type_send',
+        'current_index',
         'active2',
         'time_delay2',
         'time_nex_run2',
+        'type_send2',
+        'current_index2',
     ];
 
     public function items()
