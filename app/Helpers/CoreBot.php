@@ -117,7 +117,7 @@ class CoreBot
         $setupAnswer = [
             'type'  =>  'text',
             'data'  =>  [
-                'text'  =>  'Confirm',
+                'text'  =>  'Xác nhận',
                 'reply_markup'  =>  [
                     'inline_keyboard'  =>  [
                         [
