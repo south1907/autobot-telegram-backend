@@ -10,9 +10,9 @@ use App\Models\Group;
 use App\Models\Item;
 use App\Models\Setting;
 use App\Models\Telegram\Message;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Telegram;
 use YouTube\Exception\YouTubeException;
@@ -78,15 +78,21 @@ class BotController extends Controller
             $answer = null;
             if ($message->getType() == 'WITH_BOT') {
                 $flagYoutube = false;
-                $arrUrl = $message->getArrUrl();
-                if ($arrUrl != null && count($arrUrl) > 0) {
-                    foreach ($arrUrl as $url) {
-                        if (str_contains($url, 'youtube.com') || str_contains($url, 'youtu.be')) {
-                            $flagYoutube = true;
-                            $answer = CoreBot::getAnswerCreateType($url);
-                            break;
+
+                $checkUser = User::where('id_telegram', $message->getUserId())->first();
+                if ($checkUser != null && $checkUser->is_admin == 1) {
+                    $arrUrl = $message->getArrUrl();
+                    if ($arrUrl != null && count($arrUrl) > 0) {
+                        foreach ($arrUrl as $url) {
+                            if (str_contains($url, 'youtube.com') || str_contains($url, 'youtu.be')) {
+                                $flagYoutube = true;
+                                $answer = CoreBot::getAnswerCreateType($url);
+                                break;
+                            }
                         }
                     }
+                } else {
+                    info("not admin, not create type");
                 }
 
                 if (!$flagYoutube) {
