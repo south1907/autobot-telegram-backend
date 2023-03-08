@@ -7,6 +7,7 @@ use App\Helpers\CoreBot;
 use App\Helpers\MessageHelper;
 use App\Helpers\TelegramApi;
 use App\Models\Group;
+use App\Models\Item;
 use App\Models\Setting;
 use App\Models\Telegram\Message;
 use Carbon\Carbon;
@@ -14,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Telegram;
+use YouTube\Exception\YouTubeException;
+use YouTube\YouTubeDownloader;
 
 class BotController extends Controller
 {
@@ -74,14 +77,62 @@ class BotController extends Controller
 
             $answer = null;
             if ($message->getType() == 'WITH_BOT') {
-                // only get answer
-                $answer = CoreBot::getAnswer($message);
+                $flagYoutube = false;
+                $arrUrl = $message->getArrUrl();
+                if ($arrUrl != null && count($arrUrl) > 0) {
+                    foreach ($arrUrl as $url) {
+                        if (str_contains($url, 'youtube.com') || str_contains($url, 'youtu.be')) {
+                            $flagYoutube = true;
+                            $answer = CoreBot::getAnswerCreateType($url);
+                            break;
+                        }
+                    }
+                }
+
+                if (!$flagYoutube) {
+                    // only get answer
+                    $answer = CoreBot::getAnswer($message);
+                }
+
             }
 
             if ($message->getType() == 'WITH_GROUP') {
                 if ($message->getCommand() && $message->isSelfCommand()) {
                     // command
                     $answer = CoreBot::getAnswer($message);
+                }
+            }
+
+            if ($message->getType() == 'CALLBACK') {
+                $dataCallback = $message->getDataCallback();
+                if (str_contains($dataCallback, 'youtube.com') || str_contains($dataCallback, 'youtu.be')) {
+
+                    // check exists
+                    $checkExists = Item::where('link', $dataCallback)->first();
+                    if ($checkExists) {
+                        $answer = CoreBot::getAnswerConfirm('Đã tạo trước đó');
+                    } else {
+                        $youtube = new YouTubeDownloader();
+                        $titleYoutube = null;
+                        try {
+                            $downloadOptions = $youtube->getDownloadLinks($dataCallback);
+                            $titleYoutube = $downloadOptions->getInfo()->getTitle();
+                        } catch (YouTubeException $e) {
+                            echo 'Something went wrong: ' . $e->getMessage();
+                        }
+
+                        // create Item
+                        $item = new Item();
+                        $item->name = $titleYoutube;
+                        $item->type = 1;
+                        $item->link = $dataCallback;
+                        $item->id_telegram = $message->getUserId();
+                        $item->save();
+                        $answer = CoreBot::getAnswerConfirm('Tạo thành công');
+                    }
+                }
+                if ($dataCallback == 'NONE') {
+                    $answer = CoreBot::getAnswerConfirm('Không tạo');
                 }
             }
             if ($answer) {

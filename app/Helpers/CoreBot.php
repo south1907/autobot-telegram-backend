@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Item;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Telegram;
 
@@ -108,6 +109,45 @@ class CoreBot
             ]
         ];
 
+        return $results;
+    }
+
+    public static function getAnswerCreateType($link) {
+        $results = [];
+        $setupAnswer = [
+            'type'  =>  'text',
+            'data'  =>  [
+                'text'  =>  'Confirm',
+                'reply_markup'  =>  [
+                    'inline_keyboard'  =>  [
+                        [
+                            [
+                                'text'  =>  'Đồng ý',
+                                'callback_data' =>  $link
+                            ],
+                            [
+                                'text'  =>  'Không đồng ý',
+                                'callback_data' =>  'NONE'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $results[] = $setupAnswer;
+        return $results;
+    }
+
+    public static function getAnswerConfirm($text) {
+        $results = [];
+        $answer = [
+            'type'  =>  'text',
+            'data'  =>  [
+                'text'  =>  $text,
+                'reply_markup'  =>  null
+            ]
+        ];
+        $results[] = $answer;
         return $results;
     }
 

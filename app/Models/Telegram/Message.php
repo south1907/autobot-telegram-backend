@@ -41,6 +41,8 @@ class Message
     // type of message: COMMENT, FORWARD, IMAGE, AUDIO, GIF, VIDEO, STICKER, FILE
     private $typeMessage;
 
+    private $dataCallback;
+
     private $stickerPackage;
 
     private $forwardFrom;
@@ -204,6 +206,13 @@ class Message
             }
 
         }
+
+        if (array_key_exists('callback_query', $body)) {
+            $this->userId = $body['callback_query']['message']['from']['id'];
+            $this->sourceId = $body['callback_query']['message']['chat']['id'];
+            $this->type = 'CALLBACK';
+            $this->dataCallback = $body['callback_query']['data'];
+        }
     }
 
     public function checkNull() {
@@ -214,7 +223,7 @@ class Message
     }
 
     public function checkNullTypeMessage() {
-        if ($this->type == 'MEMBER_LEFT' || $this->type == 'MEMBER_JOIN' || $this->type == 'MIGRATE_SUPER_GROUP' || $this->type == 'BOT_JOIN' || $this->type == 'BOT_LEFT') {
+        if ($this->type == 'MEMBER_LEFT' || $this->type == 'MEMBER_JOIN' || $this->type == 'MIGRATE_SUPER_GROUP' || $this->type == 'BOT_JOIN' || $this->type == 'BOT_LEFT' || $this->type == 'CALLBACK') {
             return false;
         }
         if ($this->typeMessage) {
@@ -285,6 +294,14 @@ class Message
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDataCallback()
+    {
+        return $this->dataCallback;
     }
 
     /**
@@ -390,5 +407,8 @@ class Message
     {
         return $this->isMedia;
     }
+
+
+
 
 }
