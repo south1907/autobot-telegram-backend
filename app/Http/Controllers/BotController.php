@@ -113,6 +113,7 @@ class BotController extends Controller
                 $dataCallback = $message->getDataCallback();
                 if (str_contains($dataCallback, 'youtube.com') || str_contains($dataCallback, 'youtu.be')) {
                     $dataCallback = str_replace('&feature=share', '', $dataCallback);
+                    $dataCallback = str_replace('youtube.com/live/', 'youtube.com/watch?v=', $dataCallback);
                     $dataCallback = str_replace('youtu.be/', 'youtube.com/watch?v=', $dataCallback);
 
                     // check exists
