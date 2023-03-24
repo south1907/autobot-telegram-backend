@@ -164,4 +164,22 @@ class TelegramApi
         }
         return false;
     }
+
+    public static function getListAdmin($groupId) {
+        $strAdmin = '';
+        try {
+            $admins = TRequest::getChatAdministrators([
+                'chat_id' => $groupId
+            ])->getResult();
+            info($admins);
+            if ($admins) {
+                foreach($admins as $admin) {
+                    $strAdmin .= $admin->user['id'];
+                }
+            }
+        } catch (TelegramException $e) {
+            info('ERROR GET ADMIN');
+        }
+        return $strAdmin;
+    }
 }

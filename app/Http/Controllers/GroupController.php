@@ -27,7 +27,7 @@ class GroupController extends Controller
         }
 
         $userIdTelegram = $currentUser->id_telegram;
-        $groups = Group::where('user_id_telegram', $userIdTelegram)->get();
+        $groups = Group::where('user_id_telegram', 'like', '%' . $userIdTelegram . '%')->get();
         if ($groups) {
             return $this->responseSuccess($groups);
         }
@@ -43,9 +43,18 @@ class GroupController extends Controller
 
         $groupId = $request->get('group_id');
 
+        try {
+            $tokenBot = env('BOT_TOKEN');
+            new Telegram($tokenBot);
+        } catch (TelegramException $e) {
+            info('ERROR CLIENT TELEGRAM');
+            return $this->responseError();
+        }
+        TelegramApi::getListAdmin($groupId);
+
         $group = Group::where('id_telegram', $groupId)->with('items')->first();
         if ($group) {
-            if ($currentUser->id_telegram != $group->user_id_telegram) {
+            if (!str_contains($group->user_id_telegram, $currentUser->id_telegram)) {
                 return $this->responseError();
             }
             return $this->responseSuccess($group);
@@ -71,7 +80,7 @@ class GroupController extends Controller
 
             $userIdTelegram = $currentUser->id_telegram;
 
-            if ($userIdTelegram != $group->user_id_telegram) {
+            if (!str_contains($group->user_id_telegram, $currentUser->id_telegram)) {
                 return $this->responseError('Bạn không có quyền thực hiện');
             }
 

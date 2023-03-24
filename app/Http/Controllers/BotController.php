@@ -41,11 +41,25 @@ class BotController extends Controller
                 if ($checkGroup) {
                     info("group " . $groupId . " had a bot, not create group data");
                 } else {
+
+                    try {
+                        new Telegram($tokenBot);
+                    } catch (TelegramException $e) {
+                        info('ERROR CLIENT TELEGRAM');
+                        return false;
+                    }
+
                     info("group " . $groupId . " bot join, create group data");
                     $group = new Group();
                     $group->name = $message->getSourceTitle();
                     $group->id_telegram = $message->getSourceId();
                     $group->user_id_telegram = $message->getUserId();
+
+                    $listAdmin = TelegramApi::getListAdmin($message->getSourceId());
+                    if ($listAdmin != '') {
+                        $group->user_id_telegram = $listAdmin;
+                    }
+
                     $group->active = 0;
                     $group->active2 = 0;
                     $group->time_delay = 86400;
