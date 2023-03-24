@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Group;
 use App\Models\Item;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Telegram;
@@ -15,6 +16,28 @@ class CoreBot
         // chat command voi group
         if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && ($message->getCommand() == '/setup' || $message->getCommand() == '/start')) {
             $result = self::getAnswerSetup($message->getSourceId(), $message->getFullname());
+        }
+
+        // chat update voi group
+        if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && ($message->getCommand() == '/stat' || $message->getCommand() == '/adupdate')) {
+            // update $group
+            $group = Group::where('id_telegram', $message->getSourceId())->first();
+            try {
+                $tokenBot = env('BOT_TOKEN');
+                new Telegram($tokenBot);
+
+                $listAdmin = TelegramApi::getListAdmin($message->getSourceId());
+                if ($listAdmin != '') {
+                    $group->user_id_telegram = $listAdmin;
+                    $group->save();
+                }
+            } catch (TelegramException $e) {
+                info('ERROR CLIENT TELEGRAM');
+            }
+
+            if ($message->getCommand() == '/adupdate') {
+                $result = self::getAnswerConfirm('Danh sách người quản t rị được cập nhật');
+            }
         }
 
         // chat voi bot

@@ -43,15 +43,6 @@ class GroupController extends Controller
 
         $groupId = $request->get('group_id');
 
-        try {
-            $tokenBot = env('BOT_TOKEN');
-            new Telegram($tokenBot);
-        } catch (TelegramException $e) {
-            info('ERROR CLIENT TELEGRAM');
-            return $this->responseError();
-        }
-        TelegramApi::getListAdmin($groupId);
-
         $group = Group::where('id_telegram', $groupId)->with('items')->first();
         if ($group) {
             if (!str_contains($group->user_id_telegram, $currentUser->id_telegram)) {

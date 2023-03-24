@@ -51,7 +51,7 @@ class Message
     private $isSelfCommand = false;
 
     // some command fixed form bot
-    private $arrCommandBot = ['/setup', '/start'];
+    private $arrCommandBot = ['/setup', '/start', '/stat', '/adupdate'];
 
     public function __construct($body)
     {

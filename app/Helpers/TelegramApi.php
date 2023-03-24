@@ -174,7 +174,7 @@ class TelegramApi
             info($admins);
             if ($admins) {
                 foreach($admins as $admin) {
-                    $strAdmin .= $admin->user['id'];
+                    $strAdmin .= $admin->user['id'] . ';';
                 }
             }
         } catch (TelegramException $e) {
