@@ -14,12 +14,12 @@ class CoreBot
         $result = null;
 
         // chat command voi group
-        if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && ($message->getCommand() == '/setup' || $message->getCommand() == '/start')) {
+        if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && ($message->getCommand() == '/setup')) {
             $result = self::getAnswerSetup($message->getSourceId(), $message->getFullname());
         }
 
         // chat update voi group
-        if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && ($message->getCommand() == '/stat' || $message->getCommand() == '/adupdate')) {
+        if ($message->getType() == 'WITH_GROUP' && $message->getCommand() && $message->isSelfCommand() && ($message->getCommand() == '/start' || $message->getCommand() == '/stat' || $message->getCommand() == '/adupdate')) {
             // update $group
             $group = Group::where('id_telegram', $message->getSourceId())->first();
             try {
@@ -33,6 +33,10 @@ class CoreBot
                 }
             } catch (TelegramException $e) {
                 info('ERROR CLIENT TELEGRAM');
+            }
+
+            if ($message->getCommand() == '/start') {
+                $result = self::getAnswerSetup($message->getSourceId(), $message->getFullname());
             }
 
             if ($message->getCommand() == '/adupdate') {
