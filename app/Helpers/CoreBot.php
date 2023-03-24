@@ -36,7 +36,7 @@ class CoreBot
             }
 
             if ($message->getCommand() == '/adupdate') {
-                $result = self::getAnswerConfirm('Danh sách người quản t rị được cập nhật');
+                $result = self::getAnswerConfirm('Danh sách người quản trị được cập nhật');
             }
         }
 
